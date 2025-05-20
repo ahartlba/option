@@ -30,6 +30,7 @@ class Option {
   T m_Data;
 
  public:
+  Option() = delete;
   Option(bool success) : m_Success(success) {};
   Option(bool success, T data) : m_Success(success), m_Data(data) {};
 
