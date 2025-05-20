@@ -2,14 +2,14 @@
 
 template <typename T>
 class Option {
-  private:
-    bool m_Success;
-    T m_Data;
+ private:
+  bool m_Success;
+  T m_Data;
 
-  public:
-    Option(bool success) : m_Success(success) {};
-    Option(bool success, T data) : m_Success(success), m_Data(data) {};
+ public:
+  Option(bool success) : m_Success(success) {};
+  Option(bool success, T data) : m_Success(success), m_Data(data) {};
 
-    bool Success() { return m_Success; }
-    T Data() { return m_Data; }
+  [[nodiscard]] inline bool Success() const { return m_Success; }
+  [[nodiscard]] inline T Data() const { return m_Data; }
 };
