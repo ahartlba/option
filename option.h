@@ -34,6 +34,7 @@ class Option {
   Option() = delete;
   Option(bool success) : m_Success(success) {};
   Option(bool success, T data) : m_Success(success), m_Data(data) {};
+  Option(const T& val) : m_Success(true), m_Data(val) {}
 
   [[nodiscard]] inline bool Success() const { return m_Success; }
   [[nodiscard]] inline T Data() const {

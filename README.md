@@ -24,7 +24,7 @@ curl https://raw.githubusercontent.com/ahartlba/option/refs/heads/main/option.h 
 Option<float> Fraction(float num, float den) {
     if (fabsf(den) <= static_cast<float>(1e-6))
         return Option<float>(false);
-    return Option<float>(true, num / den);
+    return num/den; // casts automatically to Option<float>(true, num / den)
 }
 
 int main() {
