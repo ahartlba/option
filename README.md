@@ -1,6 +1,8 @@
 # Option
 
 Very lightweight implementation of Rust like Option type for C++.
+I created it to keep dataflow more organised on embedded hardware with small types like uints and floats.
+For more complex usage use things like the <expected> header in C++23.
 
 ## Installation
 
@@ -23,7 +25,7 @@ curl https://raw.githubusercontent.com/ahartlba/option/refs/heads/main/option.h 
 
 Option<float> Fraction(float num, float den) {
     if (fabsf(den) <= static_cast<float>(1e-6))
-        return Option<float>(false);
+        return Option<float>(); // empty option -> error
     return num/den; // casts automatically to Option<float>(true, num / den)
 }
 

@@ -32,9 +32,7 @@ class Option {
 
  public:
   Option() : m_Success(false) {}; // empty option is unsuccessfull
-  Option(bool success) : m_Success(success) {}; // adding type makes success
   Option(T data) : m_Success(true), m_Data(data) {}; // only for small return values that get copied
-  Option(const T& data) : m_Success(true), m_Data(data) {} // returntype casting
 
   [[nodiscard]] inline bool Success() const { return m_Success; }
   [[nodiscard]] inline T Data() const {
