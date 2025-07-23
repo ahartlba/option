@@ -2,6 +2,18 @@
 
 Very lightweight implementation of Rust like Option type for C++.
 
+## Installation
+
+Clone repository using submodules, or download raw-file from `https://raw.githubusercontent.com/ahartlba/option/refs/heads/main/option.h`.
+
+### Using Curl
+
+An example using curl to download. Set your path to where you want to download file to and run
+
+```shell
+curl https://raw.githubusercontent.com/ahartlba/option/refs/heads/main/option.h > option.h
+```
+
 ## Example
 
 ```c++
