@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include "../option.h"
 
 Option<float> Fraction(float num, float den) {
@@ -18,4 +19,10 @@ int main() {
   std::cout << "Sucessfull: " << fractionDoesntWork.Success() << std::endl;
   if (!fractionDoesntWork.Success())
     std::cout << "Function failed, please check you inputs!" << std::endl;
+  // this code shows, that if you try to access data on no-success, a runtime_error is risen
+  try {
+    auto a = fractionDoesntWork.Data();
+  } catch (const std::runtime_error& e) {
+    std::cout << "Getting data failed due to: " << e.what() << std::endl;
+  }
 }
