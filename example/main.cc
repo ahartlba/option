@@ -5,14 +5,14 @@
 
 Option<float> Fraction(float num, float den) {
   if (fabsf(den) <= static_cast<float>(1e-6))
-    return Option<float>(); // empty option -> error
+    return Option<float>();  // empty option -> error
   return Option<float>(num / den);
 }
 // you can also use implicit conversion to keep function cleeaner
 Option<float> FractionCast(float num, float den) {
   if (fabsf(den) <= static_cast<float>(1e-6))
     return Option<float>();
-  return num/den;
+  return num / den;
 }
 
 int main() {

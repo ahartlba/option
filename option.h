@@ -34,6 +34,8 @@ class Option {
   Option() : m_Success(false) {}; // empty option is unsuccessfull
   Option(T data) : m_Success(true), m_Data(data) {}; // only for small return values that get copied
 
+
+  explicit operator bool() const {return m_Success;}
   [[nodiscard]] inline bool Success() const { return m_Success; }
   [[nodiscard]] inline T Data() const {
     if (m_Success)
