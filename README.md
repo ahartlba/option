@@ -6,7 +6,6 @@ I created it to keep dataflow more organised on embedded hardware with small typ
 where i do not have access to the `<optional>` header.
 If possible always use the `<expected>` header in C++23 or `<optional>` in C++17.
 
-
 ## Installation
 
 Clone repository using submodules, or download raw-file from `https://raw.githubusercontent.com/ahartlba/option/refs/heads/main/option.h`.
@@ -28,14 +27,14 @@ curl https://raw.githubusercontent.com/ahartlba/option/refs/heads/main/option.h 
 
 Option<float> Fraction(float num, float den) {
     if (fabsf(den) <= static_cast<float>(1e-6))
-        return Option<float>(); // empty option -> error
-    return num/den; // casts automatically to Option<float>(true, num / den)
+        return {};
+    return num/den; 
 }
 
 int main() {
     auto f = Fraction(1.2f, 0.1f);
-    std::cout << "Sucessfull: " << f.Success() << std::endl;
-    if (f.Success())
-        std::cout << f.Data() << std::endl;
+    std::cout << "Sucessfull: " << f.has_value()<< std::endl;
+    if (f)
+        std::cout << *f << std::endl;
 }
 ```
