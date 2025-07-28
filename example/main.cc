@@ -38,4 +38,11 @@ int main() {
     std::cout << "Success: " << *fractionCast << std::endl;
   else
     std::cout << "No Success" << std::endl;
+
+  auto fractionOrSuccess = Fraction(1.2f, 0.1f);
+  auto fractionOrFail = Fraction(1.2f, 0.0f);
+
+  std::cout << "---- value or ----" << std::endl;
+  std::cout << fractionOrSuccess.value_or(100.0f) << std::endl;
+  std::cout << fractionOrFail.value_or(100.0f) << std::endl;
 }

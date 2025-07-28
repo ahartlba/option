@@ -94,6 +94,8 @@ class Option {
   T& value() { return *ptr(); }
   const T& value() const { return *ptr(); }
 
+  T& value_or(T default_value) { return has_value() ? *ptr() : default_value; }
+
   T& operator*() { return value(); }
   const T& operator*() const { return value(); }
 
