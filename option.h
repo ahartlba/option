@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
+
 namespace option {
 
 class bad_optional_access : public std::exception {
