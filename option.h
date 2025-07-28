@@ -22,24 +22,120 @@
  * SOFTWARE.
 **/
 #pragma once
+#include <iostream>
 #include <stdexcept>
+#include <type_traits>
+#include <utility>
+namespace option {
+
+class bad_optional_access : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "bad optional access; no value assigned";
+  }
+};
+
+struct none_t {
+  explicit constexpr none_t(int) {}
+};
+constexpr none_t none{0};
 
 template <typename T>
 class Option {
  private:
-  bool m_Success;
-  T m_Data;
+  bool has_value_;
+  alignas(T) unsigned char storage_[sizeof(T)];
+
+  T* ptr() { return reinterpret_cast<T*>(storage_); }
+  const T* ptr() const { return reinterpret_cast<const T*>(storage_); }
 
  public:
-  Option() : m_Success(false) {}; // empty option is unsuccessfull
-  Option(T data) : m_Success(true), m_Data(data) {}; // only for small return values that get copied
+  Option() noexcept : has_value_(false) {}
+  Option(none_t) noexcept : has_value_(false) {}
+  Option(const T& value) : has_value_(true) { new (storage_) T(value); }
 
+  Option(T&& value) noexcept(std::is_nothrow_move_constructible<T>::value)
+      : has_value_(true) {
+    new (storage_) T(std::move(value));
+  }
 
-  explicit operator bool() const {return m_Success;}
-  [[nodiscard]] inline bool Success() const { return m_Success; }
-  [[nodiscard]] inline T Data() const {
-    if (m_Success)
-      return m_Data;
-    throw std::runtime_error("No Data available, Option unsuccessfull!");
+  Option(const Option& other) : has_value_(other.has_value_) {
+    if (has_value_) {
+      new (storage_) T(*other);
+    }
+  }
+
+  Option(Option&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
+      : has_value_(other.has_value_) {
+    if (has_value_) {
+      new (storage_) T(std::move(*other));
+    }
+  }
+
+  ~Option() { reset(); }
+
+  Option& operator=(none_t) noexcept {
+    reset();
+    return *this;
+  }
+
+  Option& operator=(const Option& other) {
+    if (this != &other) {
+      reset();
+      if (other.has_value_) {
+        new (storage_) T(*other);
+        has_value_ = true;
+      }
+    }
+    return *this;
+  }
+
+  Option& operator=(Option&& other) noexcept(
+      std::is_nothrow_move_assignable<T>::value) {
+    if (this != &other) {
+      reset();
+      if (other.has_value_) {
+        new (storage_) T(std::move(*other));
+        has_value_ = true;
+      }
+    }
+    return *this;
+  }
+
+  bool has_value() const noexcept { return has_value_; }
+  explicit operator bool() const noexcept { return has_value_; }
+  T& value() {
+    if (!has_value_)
+      throw bad_optional_access();
+    return *ptr();
+  }
+
+  const T& value() const {
+    if (!has_value_)
+      throw bad_optional_access();
+    return *ptr();
+  }
+
+  T& operator*() { return value(); }
+  const T& operator*() const { return value(); }
+
+  T* operator->() { return &value(); }
+  const T* operator->() const { return &value(); }
+
+  // Reset
+  void reset() noexcept {
+    if (has_value_) {
+      ptr()->~T();
+      has_value_ = false;
+    }
+  }
+
+  // Emplace
+  template <typename... Args>
+  void emplace(Args&&... args) {
+    reset();
+    new (storage_) T(std::forward<Args>(args)...);
+    has_value_ = true;
   }
 };
+}  // namespace option

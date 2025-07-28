@@ -1,9 +1,11 @@
 # Option
 
 Very lightweight implementation of Rust like Option type for C++.
-I created it to keep dataflow more organised on embedded hardware with small types like uints and floats.
-For more complex usage use things like the `<expected>` header in C++23 or `<optional>` in C++17.
-This implementation is for use-cases that do not support above headers
+Heavily inspired by C++17 header `<optional>`.
+I created it to keep dataflow more organised on embedded hardware with small types like uints and floats,
+where i do not have access to the `<optional>` header.
+If possible always use the `<expected>` header in C++23 or `<optional>` in C++17.
+
 
 ## Installation
 
