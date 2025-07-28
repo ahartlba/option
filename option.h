@@ -22,18 +22,8 @@
  * SOFTWARE.
 **/
 #pragma once
-#include <iostream>
-#include <stdexcept>
-#include <type_traits>
-#include <utility>
-namespace option {
 
-class bad_optional_access : public std::exception {
- public:
-  const char* what() const noexcept override {
-    return "bad optional access; no value assigned";
-  }
-};
+namespace option {
 
 struct none_t {
   explicit constexpr none_t(int) {}
@@ -54,10 +44,7 @@ class Option {
   Option(none_t) noexcept : has_value_(false) {}
   Option(const T& value) : has_value_(true) { new (storage_) T(value); }
 
-  Option(T&& value) noexcept(std::is_nothrow_move_constructible<T>::value)
-      : has_value_(true) {
-    new (storage_) T(std::move(value));
-  }
+  Option(T&& value) : has_value_(true) { new (storage_) T(std::move(value)); }
 
   Option(const Option& other) : has_value_(other.has_value_) {
     if (has_value_) {
@@ -65,8 +52,7 @@ class Option {
     }
   }
 
-  Option(Option&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
-      : has_value_(other.has_value_) {
+  Option(Option&& other) : has_value_(other.has_value_) {
     if (has_value_) {
       new (storage_) T(std::move(*other));
     }
@@ -90,8 +76,7 @@ class Option {
     return *this;
   }
 
-  Option& operator=(Option&& other) noexcept(
-      std::is_nothrow_move_assignable<T>::value) {
+  Option& operator=(Option&& other) {
     if (this != &other) {
       reset();
       if (other.has_value_) {
@@ -104,17 +89,10 @@ class Option {
 
   bool has_value() const noexcept { return has_value_; }
   explicit operator bool() const noexcept { return has_value_; }
-  T& value() {
-    if (!has_value_)
-      throw bad_optional_access();
-    return *ptr();
-  }
 
-  const T& value() const {
-    if (!has_value_)
-      throw bad_optional_access();
-    return *ptr();
-  }
+  // allow for access without raising error, so that it works embedded
+  T& value() { return *ptr(); }
+  const T& value() const { return *ptr(); }
 
   T& operator*() { return value(); }
   const T& operator*() const { return value(); }

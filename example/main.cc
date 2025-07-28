@@ -27,12 +27,11 @@ int main() {
   std::cout << "Sucessfull: " << fractionDoesntWork.has_value() << std::endl;
   if (!fractionDoesntWork)
     std::cout << "Function failed, please check you inputs!" << std::endl;
-  // this code shows, that if you try to access data on no-success, a runtime_error is risen
-  try {
-    auto _ = fractionDoesntWork.value();
-  } catch (const option::bad_optional_access& e) {
-    std::cout << "Getting data failed due to: " << e.what() << std::endl;
-  }
+
+  // this code shows, that if accessing the value without setting it
+  // does not raise an error but some random data.
+  // while not optimal this is wanted behaviour
+  std::cout << *fractionDoesntWork << std::endl;
 
   auto fractionCast = FractionCast(1.2f, 0.1f);
   if (fractionCast)
