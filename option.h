@@ -100,7 +100,6 @@ class Option {
   T* operator->() { return &value(); }
   const T* operator->() const { return &value(); }
 
-  // Reset
   void reset() noexcept {
     if (has_value_) {
       ptr()->~T();
@@ -108,7 +107,6 @@ class Option {
     }
   }
 
-  // Emplace
   template <typename... Args>
   void emplace(Args&&... args) {
     reset();
