@@ -4,13 +4,13 @@
 CXX := g++
 
 # Compiler flags
-CXXFLAGS := -Wall -Wextra -std=c++11 -O3
+CXXFLAGS := -Wall -Wextra -std=c++11
 
 # Target executable
-TARGET := main
+TARGET := tests
 
 # Source files
-SRC := main.cc
+SRC := tests.cc
 
 # Build rules
 all: run

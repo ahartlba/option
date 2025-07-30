@@ -23,9 +23,30 @@
 **/
 #pragma once
 
-#ifdef _USE_STD_FOR_OPTION
-#include <utility>
-#endif
+/* optionlib
+ * Library for custom implementation of stdlib functions
+ * necessary to be as equal to <optional> as possible
+ */
+namespace optionlib {
+template <typename T>
+struct remove_reference {
+  using type = T;
+};
+template <typename T>
+struct remove_reference<T&> {
+  using type = T;
+};
+template <typename T>
+struct remove_reference<T&&> {
+  using type = T;
+};
+
+template <typename T>
+T&& forward(typename remove_reference<T>::type& t) {
+  return static_cast<T&&>(t);
+}
+
+}  // namespace optionlib
 
 namespace option {
 
@@ -47,31 +68,20 @@ class Option {
   Option() noexcept : has_value_(false) {}
   Option(none_t) noexcept : has_value_(false) {}
   Option(const T& value) : has_value_(true) { new (storage_) T(value); }
-#ifdef _USE_STD_FOR_OPTION
-  Option(T&& value) : has_value_(true) { new (storage_) T(std::move(value)); }
-#else
-  Option(T&& value) : has_value_(true) {
-    new (storage_) T(static_cast<T&&>(value));
-  }
-#endif
+  Option(T&& value) : has_value_(true) { new (storage_) T(static_cast<T&&>(value)); }
+
   Option(const Option& other) : has_value_(other.has_value_) {
     if (has_value_) {
       new (storage_) T(*other);
     }
   }
-#ifdef _USE_STD_FOR_OPTION
-  Option(Option&& other) : has_value_(other.has_value_) {
-    if (has_value_) {
-      new (storage_) T(std::move(*other));
-    }
-  }
-#else
+
   Option(Option&& other) : has_value_(other.has_value_) {
     if (has_value_) {
       new (storage_) T(static_cast<T&&>(*other));
     }
   }
-#endif
+
   ~Option() { reset(); }
 
   Option& operator=(none_t) noexcept {
@@ -122,13 +132,11 @@ class Option {
       has_value_ = false;
     }
   }
-#ifdef _USE_STD_FOR_OPTION
   template <typename... Args>
   void emplace(Args&&... args) {
     reset();
-    new (storage_) T(std::forward<Args>(args)...);
+    new (storage_) T(optionlib::forward<Args>(args)...);
     has_value_ = true;
   }
-#endif
 };
 }  // namespace option

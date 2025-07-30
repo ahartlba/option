@@ -1,6 +1,6 @@
 #include <cmath>
 #include <iostream>
-// #define _USE_STD_FOR_OPTION
+
 #include "../option.h"
 
 using option::Option;
