@@ -23,6 +23,7 @@
 **/
 #pragma once
 
+#include <new>
 /* optionlib
  * Library for custom implementation of stdlib functions
  * necessary to be as equal to <optional> as possible
