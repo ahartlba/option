@@ -23,6 +23,10 @@
 **/
 #pragma once
 
+#ifdef _USE_STD_FOR_OPTION
+#include <utility>
+#endif
+
 namespace option {
 
 struct none_t {
@@ -43,21 +47,31 @@ class Option {
   Option() noexcept : has_value_(false) {}
   Option(none_t) noexcept : has_value_(false) {}
   Option(const T& value) : has_value_(true) { new (storage_) T(value); }
-
+#ifdef _USE_STD_FOR_OPTION
   Option(T&& value) : has_value_(true) { new (storage_) T(std::move(value)); }
-
+#else
+  Option(T&& value) : has_value_(true) {
+    new (storage_) T(static_cast<T&&>(value));
+  }
+#endif
   Option(const Option& other) : has_value_(other.has_value_) {
     if (has_value_) {
       new (storage_) T(*other);
     }
   }
-
+#ifdef _USE_STD_FOR_OPTION
   Option(Option&& other) : has_value_(other.has_value_) {
     if (has_value_) {
       new (storage_) T(std::move(*other));
     }
   }
-
+#else
+  Option(Option&& other) : has_value_(other.has_value_) {
+    if (has_value_) {
+      new (storage_) T(static_cast<T&&>(*other));
+    }
+  }
+#endif
   ~Option() { reset(); }
 
   Option& operator=(none_t) noexcept {
@@ -80,7 +94,7 @@ class Option {
     if (this != &other) {
       reset();
       if (other.has_value_) {
-        new (storage_) T(std::move(*other));
+        new (storage_) T(static_cast<T&&>(*other));
         has_value_ = true;
       }
     }
@@ -94,7 +108,7 @@ class Option {
   T& value() { return *ptr(); }
   const T& value() const { return *ptr(); }
 
-  T& value_or(T default_value) { return has_value() ? *ptr() : default_value; }
+  T value_or(T default_value) { return has_value() ? *ptr() : default_value; }
 
   T& operator*() { return value(); }
   const T& operator*() const { return value(); }
@@ -108,12 +122,13 @@ class Option {
       has_value_ = false;
     }
   }
-
+#ifdef _USE_STD_FOR_OPTION
   template <typename... Args>
   void emplace(Args&&... args) {
     reset();
     new (storage_) T(std::forward<Args>(args)...);
     has_value_ = true;
   }
+#endif
 };
 }  // namespace option

@@ -1,6 +1,6 @@
 #include <cmath>
 #include <iostream>
-#include <stdexcept>
+// #define _USE_STD_FOR_OPTION
 #include "../option.h"
 
 using option::Option;
@@ -45,4 +45,9 @@ int main() {
   std::cout << "---- value or ----" << std::endl;
   std::cout << fractionOrSuccess.value_or(100.0f) << std::endl;
   std::cout << fractionOrFail.value_or(100.0f) << std::endl;
+
+  std::cout << "---- other exampels ----" << std::endl;
+
+  Option<bool> startSuccessfull = true;
+  std::cout << startSuccessfull.value() << std::endl;
 }
